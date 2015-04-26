@@ -91,7 +91,15 @@ def dict_assort(sort_dict): # for sorting result as target sentence order
         result_table.append([lists, sort_dict[lists]])
     return result_table
 
-#### Hnagul syllable to Hangul jamo (e.g., 한글 > ㅎ ㅏ ㄴ ㄱ ㅡ ㄹ)
+#### Filtering only hangul syllable
+def onlyHangul(data):
+    tmp_list = []
+    for syllable in data:
+        if isHangulSyllable(syllable):
+            tmp_list.append(syllable)
+    return tmp_list
+
+#### Hangul syllable to Hangul jamo (e.g., 한글 > ㅎ ㅏ ㄴ ㄱ ㅡ ㄹ)
 from hangulDecoder import isHangulSyllable, decodeSyllable # requiring for checking hangul and decoding syllable
 def sylTojamo(syllable_list): # syllable to jamo
     tmp_list = []

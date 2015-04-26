@@ -17,9 +17,10 @@ sejong.nov.train은 세종코퍼스에서 추출한 소설코퍼스이다. 이 �
 # 한글 character인지 확인하는 코드, 즉 한글 자모 외엔 모두 무시
 '''
 
-import codecs, os
-from math import log1p
+import codecs, os, sys
+sys.path.append(curr_dir+my_dir) # for loading hangulDecoder in my_dir
 from hangulDecoder import isHangulSyllable, decodeSyllable
+
 
 #### Setiing file names and directory
 curr_dir = os.getcwd() + "\\"
@@ -40,7 +41,7 @@ f = codecs.open(curr_dir + my_dir + filename[2], "r", "utf-8")
 train = f.read()
 f.close()
 
-#### defining syllable to jamo convert function
+#### Filtering only hangul syllable
 def onlyHangul(data):
     tmp_list = []
     for syllable in data:
@@ -48,6 +49,7 @@ def onlyHangul(data):
             tmp_list.append(syllable)
     return tmp_list
 
+#### Hangul syllable to Hangul jamo (e.g., 한글 > ㅎ ㅏ ㄴ ㄱ ㅡ ㄹ)
 def sylTojamo(syllable_list): # syllable to jamo
     tmp_list = []
     for tmp_syl in syllable_list:
@@ -57,8 +59,6 @@ def sylTojamo(syllable_list): # syllable to jamo
             for decoded in decodeSyllable(tmp_syl): # decoding hangul syllable
                 tmp_list.append(decoded)
     return tmp_list
-def log2(x):
-    return math.log(x,2)
 
 test1_syllable = onlyHangul(test1)
 test2_syllable = onlyHangul(test2)
