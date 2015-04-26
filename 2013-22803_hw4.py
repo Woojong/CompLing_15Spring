@@ -17,16 +17,17 @@ sejong.nov.train은 세종코퍼스에서 추출한 소설코퍼스이다. 이 �
 # 한글 character인지 확인하는 코드, 즉 한글 자모 외엔 모두 무시
 '''
 
-import codecs, os, sys
-sys.path.append(curr_dir+my_dir) # for loading hangulDecoder in my_dir
-from hangulDecoder import isHangulSyllable, decodeSyllable
-
-
 #### Setiing file names and directory
 curr_dir = os.getcwd() + "\\"
 my_dir = "hw4\\"
 filename = ["haniTest.txt", "sejong.nov.test.txt", "sejong.nov.train.txt"]
 savetext = "Output.txt"
+
+
+import codecs, os, sys
+sys.path.append(curr_dir+my_dir) # for loading hangulDecoder in my_dir
+from hangulDecoder import isHangulSyllable, decodeSyllable
+
 
 #### Making directory for output file.
 if not os.path.exists(curr_dir+my_dir):
@@ -60,31 +61,6 @@ def sylTojamo(syllable_list): # syllable to jamo
                 tmp_list.append(decoded)
     return tmp_list
 
-test1_syllable = onlyHangul(test1)
-test2_syllable = onlyHangul(test2)
-train_syllable = onlyHangul(train)
-
-test1_jamo = sylTojamo(test1_syllable)
-test2_jamo = sylTojamo(test2_syllable)
-train_jamo = sylTojamo(train_syllable)
-
-from apd_NLP import ngram_maker, cond_prob
-test1_unijamo_dict = ngram_maker(test1_jamo, 1)
-test1_bijamo_dict = ngram_maker(test1_jamo, 2)
-test1_unisyl_dict = ngram_maker(test1_syllable, 1)
-test1_bisyl_dict = ngram_maker(test1_syllable, 2)
-test2_unijamo_dict = ngram_maker(test2_jamo, 1)
-test2_bijamo_dict = ngram_maker(test2_jamo, 2)
-test2_unisyl_dict = ngram_maker(test2_syllable, 1)
-test2_bisyl_dict = ngram_maker(test2_syllable, 2)
-train_unijamo_dict = ngram_maker(train_jamo, 1)
-train_bijamo_dict = ngram_maker(train_jamo, 2)
-train_unisyl_dict = ngram_maker(train_syllable, 1)
-train_bisyl_dict = ngram_maker(train_syllable, 2)
-
-uniprob = cond_prob(train_unisyl_dict, [], True)
-biprob = cond_prob(train_bisyl_dict, train_unisyl_dict)
-
 def UNK_process(traindata, testdata):
     keylist = testdata.keys()
     for keys in keylist:
@@ -104,3 +80,28 @@ def entropy_compute(data, crossdata): # if you using cross entropy, data for tra
     for keylist in data_keylist:
         entropy_dict[keylist] = data[keylist]*log2(crossdata[keylist])
     return entropy_dict
+
+test1_syllable = onlyHangul(test1)
+test2_syllable = onlyHangul(test2)
+train_syllable = onlyHangul(train)
+
+test1_jamo = sylTojamo(test1_syllable)
+test2_jamo = sylTojamo(test2_syllable)
+train_jamo = sylTojamo(train_syllable)
+
+from compling_NLP import ngram_maker, cond_prob
+test1_unijamo_dict = ngram_maker(test1_jamo, 1)
+test1_bijamo_dict = ngram_maker(test1_jamo, 2)
+test1_unisyl_dict = ngram_maker(test1_syllable, 1)
+test1_bisyl_dict = ngram_maker(test1_syllable, 2)
+test2_unijamo_dict = ngram_maker(test2_jamo, 1)
+test2_bijamo_dict = ngram_maker(test2_jamo, 2)
+test2_unisyl_dict = ngram_maker(test2_syllable, 1)
+test2_bisyl_dict = ngram_maker(test2_syllable, 2)
+train_unijamo_dict = ngram_maker(train_jamo, 1)
+train_bijamo_dict = ngram_maker(train_jamo, 2)
+train_unisyl_dict = ngram_maker(train_syllable, 1)
+train_bisyl_dict = ngram_maker(train_syllable, 2)
+
+uniprob = cond_prob(train_unisyl_dict, [], True)
+biprob = cond_prob(train_bisyl_dict, train_unisyl_dict)
