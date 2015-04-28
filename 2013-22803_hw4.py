@@ -66,6 +66,7 @@ def UNK_process(traindata, testdata):
             traindata[keys]
         except:
             testdata[u"<UNK>"] = testdata[u"<UNK>"]+1 if u"<UNK>" in testdata.keys() else 1
+            print keys
     return testdata
 
 def entropy_compute(data, crossdata, dict = True): # if you using cross entropy, data for training data, crossdata for test data, if you want to just entropy calculating, then data and crossdata for same data set (e.g., data = test, crossdata = test)
@@ -105,11 +106,11 @@ train_unisyl_dict = ngram_maker(train_syllable, 1)
 train_bisyl_dict = ngram_maker(train_syllable, 2)
 
 test1_unisyl_unkdict = UNK_process(train_unisyl_dict, test1_unisyl_dict)
-test1_biisyl_unkdict = UNK_process(train_bisyl_dict, test1_bisyl_dict)
+test1_bisyl_unkdict = UNK_process(train_bisyl_dict, test1_bisyl_dict)
 test1_unijamo_unkdict = UNK_process(train_unijamo_dict, test1_unijamo_dict)
 test1_bijiamo_unkdict = UNK_process(train_bijamo_dict, test1_bijamo_dict)
 test2_unisyl_unkdict = UNK_process(train_unisyl_dict, test2_unisyl_dict)
-test2_biisyl_unkdict = UNK_process(train_bisyl_dict, test2_bisyl_dict)
+test2_bisyl_unkdict = UNK_process(train_bisyl_dict, test2_bisyl_dict)
 test2_unijamo_unkdict = UNK_process(train_unijamo_dict, test2_unijamo_dict)
 test2_bijiamo_unkdict = UNK_process(train_bijamo_dict, test2_bijamo_dict)
 
