@@ -18,13 +18,11 @@ sejong.nov.train은 세종코퍼스에서 추출한 소설코퍼스이다. 이 �
 '''
 
 #### Setiing file names and directory
+import codecs, os, sys
 curr_dir = os.getcwd() + "\\"
 my_dir = "hw4\\"
 filename = ["haniTest.txt", "sejong.nov.test.txt", "sejong.nov.train.txt"]
 savetext = "Output.txt"
-
-
-import codecs, os, sys
 sys.path.append(curr_dir+my_dir) # for loading hangulDecoder in my_dir
 from hangulDecoder import isHangulSyllable, decodeSyllable
 
@@ -35,7 +33,7 @@ if not os.path.exists(curr_dir+my_dir):
 
 #### Open and read file
 f = codecs.open(curr_dir + my_dir + filename[0], "r", "utf-8")
-test1 = f.read()
+test2 = f.read()
 f = codecs.open(curr_dir + my_dir + filename[1], "r", "utf-8")
 test2 = f.read()
 f = codecs.open(curr_dir + my_dir + filename[2], "r", "utf-8")
@@ -68,10 +66,9 @@ def UNK_process(traindata, testdata):
             traindata[keys]
         except:
             testdata[u"<UNK>"] = testdata[u"<UNK>"]+1 if u"<UNK>" in testdata.keys() else 1
-            print keys
     return testdata
 
-def entropy_compute(data, crossdata): # if you using cross entropy, data for training data, crossdata for test data, if you want to just entropy calculating, then data and crossdata for same data set (e.g., data = test, crossdata = test)
+def entropy_compute(data, crossdata, dict = True): # if you using cross entropy, data for training data, crossdata for test data, if you want to just entropy calculating, then data and crossdata for same data set (e.g., data = test, crossdata = test)
     from math import log
     def log2(x): # for using log base 2 as function
         return log(x, 2)
@@ -79,7 +76,11 @@ def entropy_compute(data, crossdata): # if you using cross entropy, data for tra
     data_keylist = data.keys()
     for keylist in data_keylist:
         entropy_dict[keylist] = data[keylist]*log2(crossdata[keylist])
-    return entropy_dict
+    entropy_values = sum(entropy_dict.values())
+    if dict:
+        return entropy_dict
+    elif dict == False:
+        return entropy_values
 
 test1_syllable = onlyHangul(test1)
 test2_syllable = onlyHangul(test2)
@@ -103,15 +104,38 @@ train_bijamo_dict = ngram_maker(train_jamo, 2)
 train_unisyl_dict = ngram_maker(train_syllable, 1)
 train_bisyl_dict = ngram_maker(train_syllable, 2)
 
+test1_unisyl_unkdict = UNK_process(train_unisyl_dict, test1_unisyl_dict)
+test1_biisyl_unkdict = UNK_process(train_bisyl_dict, test1_bisyl_dict)
+test1_unijamo_unkdict = UNK_process(train_unijamo_dict, test1_unijamo_dict)
+test1_bijiamo_unkdict = UNK_process(train_bijamo_dict, test1_bijamo_dict)
+test2_unisyl_unkdict = UNK_process(train_unisyl_dict, test2_unisyl_dict)
+test2_biisyl_unkdict = UNK_process(train_bisyl_dict, test2_bisyl_dict)
+test2_unijamo_unkdict = UNK_process(train_unijamo_dict, test2_unijamo_dict)
+test2_bijiamo_unkdict = UNK_process(train_bijamo_dict, test2_bijamo_dict)
+
 train_unisylprob = cond_prob(train_unisyl_dict, [], True)
 train_bisylprob = cond_prob(train_bisyl_dict, train_unisyl_dict)
 train_unijamoprob = cond_prob(train_unijamo_dict, [], True)
 train_bijamoprob = cond_prob(train_bijamo_dict, train_unijamo_dict)
-test1_unisylprob = cond_prob(test1_unisyl_dict, [], True)
-test1_bisylprob = cond_prob(test1_bisyl_dict, test1_unisyl_dict)
-test1_unijamoprob = cond_prob(test1_unijamo_dict, [], True)
-test1_bijamoprob = cond_prob(test1_bijamo_dict, test1_unijamo_dict)
-test2_bisylprobunisylprob = cond_prob(test2_unisyl_dict, [], True)
-test2_bisylprob = cond_prob(test2_bisyl_dict, test2_unisyl_dict)
-test2_unijamoprob = cond_prob(test2_unijamo_dict, [], True)
-test2_bijamoprob = cond_prob(test2_bijamo_dict, test2_unijamo_dict)
+test1_unisylprob = cond_prob(test1_unisyl_unkdict, [], True)
+test1_bisylprob = cond_prob(test1_bisyl_unkdict, test1_unisyl_unkdict)
+test1_unijamoprob = cond_prob(test1_unijamo_unkdict, [], True)
+test1_bijamoprob = cond_prob(test1_bijamo_unkdict, test1_unijamo_unkdict)
+test2_unisylprob = cond_prob(test2_unisyl_unkdict, [], True)
+test2_bisylprob = cond_prob(test2_bisyl_unkdict, test2_unisyl_unkdict)
+test2_unijamoprob = cond_prob(test2_unijamo_unkdict, [], True)
+test2_bijamoprob = cond_prob(test2_bijamo_unkdict, test2_unijamo_unkdict)
+
+entropy_compute(train_unisylprob, train_unisylprob, dict = False)
+entropy_compute(train_bisylprob, train_bisylprob, dict = False)
+entropy_compute(train_unisylprob, test1_unisylprob, dict = False)
+entropy_compute(train_unisylprob, test2_unisylprob, dict = False)
+entropy_compute(train_bisylprob, test1_bisylprob, dict = False)
+entropy_compute(train_bisylprob, test2_bisylprob, dict = False)
+
+entropy_compute(train_unijamoprob, train_unijamoprob, dict = False)
+entropy_compute(train_bijamoprob, train_bijamoprob, dict = False)
+entropy_compute(train_unijamoprob, test1_unijamoprob, dict = False)
+entropy_compute(train_unijamoprob, test2_unijamoprob, dict = False)
+entropy_compute(train_bijamoprob, test1_bijamoprob, dict = False)
+entropy_compute(train_bijamoprob, test2_bijamoprob, dict = False)
