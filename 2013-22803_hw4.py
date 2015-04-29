@@ -33,7 +33,7 @@ if not os.path.exists(curr_dir+my_dir):
 
 #### Open and read file
 f = codecs.open(curr_dir + my_dir + filename[0], "r", "utf-8")
-test2 = f.read()
+test1 = f.read()
 f = codecs.open(curr_dir + my_dir + filename[1], "r", "utf-8")
 test2 = f.read()
 f = codecs.open(curr_dir + my_dir + filename[2], "r", "utf-8")
@@ -66,7 +66,6 @@ def UNK_process(traindata, testdata):
             traindata[keys]
         except:
             testdata[u"<UNK>"] = testdata[u"<UNK>"]+1 if u"<UNK>" in testdata.keys() else 1
-            print keys
     return testdata
 
 def entropy_compute(data, crossdata, dict = True): # if you using cross entropy, data for training data, crossdata for test data, if you want to just entropy calculating, then data and crossdata for same data set (e.g., data = test, crossdata = test)
@@ -108,11 +107,11 @@ train_bisyl_dict = ngram_maker(train_syllable, 2)
 test1_unisyl_unkdict = UNK_process(train_unisyl_dict, test1_unisyl_dict)
 test1_bisyl_unkdict = UNK_process(train_bisyl_dict, test1_bisyl_dict)
 test1_unijamo_unkdict = UNK_process(train_unijamo_dict, test1_unijamo_dict)
-test1_bijiamo_unkdict = UNK_process(train_bijamo_dict, test1_bijamo_dict)
+test1_bijamo_unkdict = UNK_process(train_bijamo_dict, test1_bijamo_dict)
 test2_unisyl_unkdict = UNK_process(train_unisyl_dict, test2_unisyl_dict)
 test2_bisyl_unkdict = UNK_process(train_bisyl_dict, test2_bisyl_dict)
 test2_unijamo_unkdict = UNK_process(train_unijamo_dict, test2_unijamo_dict)
-test2_bijiamo_unkdict = UNK_process(train_bijamo_dict, test2_bijamo_dict)
+test2_bijamo_unkdict = UNK_process(train_bijamo_dict, test2_bijamo_dict)
 
 train_unisylprob = cond_prob(train_unisyl_dict, [], True)
 train_bisylprob = cond_prob(train_bisyl_dict, train_unisyl_dict)
