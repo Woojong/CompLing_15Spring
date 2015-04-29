@@ -65,7 +65,7 @@ def UNK_process(traindata, testdata):
         try:
             traindata[keys]
         except:
-            testdata[u"<UNK>"] = testdata[u"<UNK>"]+1 if u"<UNK>" in testdata.keys() else 1
+            testdata[u"<UNK>"] = testdata[u"<UNK>"] + testdata[keys] if u"<UNK>" in testdata.keys() else testdata[keys]
     return testdata
 
 def entropy_compute(data, crossdata, dict = True): # if you using cross entropy, data for training data, crossdata for test data, if you want to just entropy calculating, then data and crossdata for same data set (e.g., data = test, crossdata = test)
