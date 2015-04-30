@@ -127,7 +127,6 @@ test2_bisylprob = cond_prob(test2_bisyl_dict, test2_unisyl_dict)
 test2_unijamoprob = cond_prob(test2_unijamo_dict, [], True)
 test2_bijamoprob = cond_prob(test2_bijamo_dict, test2_unijamo_dict)
 
-
 unisyl_entropy = entropy_compute(train_unisylprob, train_unisylprob, dict = False)
 bisyl_entropy = entropy_compute(train_bisylprob, train_bisylprob, dict = False)
 train1_unisyl_unkprob = UNK_process(train_unisylprob, test1_unisylprob, train_unisyl_dict, test1_unisyl_dict)
