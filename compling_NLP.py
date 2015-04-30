@@ -111,24 +111,33 @@ def sylTojamo(syllable_list): # syllable to jamo
                 tmp_list.append(decoded)
     return tmp_list
 
-#### UNK processor
-def UNK_process(traindata, testdata):
-    keylist = testdata.keys()
+#### Converting unseen words in trainig data to <UNK>
+def UNK_process(traindata, testdata, trainngram, testngram): # traindata for training probability data, testdata for test probability data, trainngram for training n-gram dictionary, testgram for test n-gram dictionary
+    keylist = testdata.keys() # extracting test data probability dictionary keys
+    total_unk = 0 # setting UNK probability as 0
+    train_nvocab = sum(trainngram.values())
     for keys in keylist:
         try:
             traindata[keys]
         except:
-            testdata[u"<UNK>"] = testdata[u"<UNK>"]+1 if u"<UNK>" in testdata.keys() else 1
-            print keys
-    return testdata
+            total_unk = total_unk + testngram[keys] if u"<UNK>" in trainngram.keys() else testngram[keys]
+    unk_prob = float(total_unk)/float(train_nvocab)
+    return unk_prob
 
-#### Entropy calculation
-def entropy_compute(data, crossdata): # if you using cross entropy, data for training data, crossdata for test data, if you want to just entropy calculating, then data and crossdata for same data set (e.g., data = test, crossdata = test)
-    from math import log
-    def log2(x): # for using log base 2 as function
+#### Computing entropy (and cross entropy, if you want entroypy: "data == crossdata", cross entropy: "data != crossdata")
+def entropy_compute(data, crossdata, unkprob = None, dict = True): # if you using cross entropy, data for training data, crossdata for test data, if you want to just entropy calculating, then data and crossdata for same data set (e.g., data = test, crossdata = test)
+    from math import log # for using log base 2 as function
+    def log2(x):
         return log(x, 2)
-    entropy_dict = {}
-    data_keylist = data.keys()
+    entropy_dict = {} # empty entropy dictionary
+    data_keylist = data.keys() # extract data dictionary keys
     for keylist in data_keylist:
-        entropy_dict[keylist] = data[keylist]*log2(crossdata[keylist])
-    return entropy_dict
+        try:
+            entropy_dict[keylist] = data[keylist]*log2(crossdata[keylist]) # p*log_2(p)
+        except:
+            entropy_dict[keylist] = data[keylist]*log2(unkprob) # if don't exist intraining data, then UNK probability which was computed already
+    entropy_values = sum(entropy_dict.values()) # summation of entropy of data
+    if dict:
+        return entropy_dict
+    elif dict == False:
+        return entropy_values
