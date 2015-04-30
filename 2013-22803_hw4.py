@@ -20,17 +20,15 @@ sejong.nov.train은 세종코퍼스에서 추출한 소설코퍼스이다. 이 �
 
 #### Setiing file names and directory
 import codecs, os, sys
+#### Making directory for output file.
+if not os.path.exists(curr_dir+my_dir):
+    os.makedirs(curr_dir+my_dir)
 curr_dir = os.getcwd() + "\\"
 my_dir = "hw4\\"
 filename = ["haniTest.txt", "sejong.nov.test.txt", "sejong.nov.train.txt"]
 savetext = "Output.txt"
 sys.path.append(curr_dir+my_dir) # for loading hangulDecoder in my_dir
 from hangulDecoder import isHangulSyllable, decodeSyllable
-
-
-#### Making directory for output file.
-if not os.path.exists(curr_dir+my_dir):
-    os.makedirs(curr_dir+my_dir)
 
 #### Open and read file
 f = codecs.open(curr_dir + my_dir + filename[0], "r", "utf-8")
