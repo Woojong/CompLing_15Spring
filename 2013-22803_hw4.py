@@ -145,4 +145,4 @@ unijamo2_cross_ent = entropy_compute(test2_unijamoprob, train_unijamoprob, train
 train1_bijamo_unkprob = UNK_process(train_bijamoprob, test1_bijamoprob, train_bijamo_dict, test1_bijamo_dict)
 bijamo1_cross_ent = entropy_compute(test1_bijamoprob, train_bijamoprob, train1_bijamo_unkprob, dict = False)
 train2_bijamo_unkprob = UNK_process(train_bijamoprob, test2_bijamoprob, train_bijamo_dict, test2_bijamo_dict)
-bijamo2_cross_ent = entropy_compute(test2_bijamoprob, train2_bijamo_unkprob, train_bijamoprob, dict = False)
+bijamo2_cross_ent = entropy_compute(test2_bijamoprob, train_bijamoprob, train2_bijamo_unkprob, dict = False)
