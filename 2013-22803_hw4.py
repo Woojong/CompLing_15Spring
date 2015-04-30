@@ -25,18 +25,18 @@ if not os.path.exists(curr_dir+my_dir):
     os.makedirs(curr_dir+my_dir)
 curr_dir = os.getcwd() + "\\"
 my_dir = "hw4\\"
-filename = ["haniTest.txt", "sejong.nov.test.txt", "sejong.nov.train.txt"]
+filename = ["sejong.nov.train.txt", "sejong.nov.test.txt", "haniTest.txt"]
 savetext = "Output.txt"
 sys.path.append(curr_dir+my_dir) # for loading hangulDecoder in my_dir
 from hangulDecoder import isHangulSyllable, decodeSyllable
 
 #### Open and read file
 f = codecs.open(curr_dir + my_dir + filename[0], "r", "utf-8")
-test1 = f.read()
-f = codecs.open(curr_dir + my_dir + filename[1], "r", "utf-8")
-test2 = f.read()
-f = codecs.open(curr_dir + my_dir + filename[2], "r", "utf-8")
 train = f.read()
+f = codecs.open(curr_dir + my_dir + filename[1], "r", "utf-8")
+test1 = f.read()
+f = codecs.open(curr_dir + my_dir + filename[2], "r", "utf-8")
+test2 = f.read()
 f.close()
 
 #### Filtering only hangul syllable
@@ -127,6 +127,10 @@ test2_bijamoprob = cond_prob(test2_bijamo_dict, test2_unijamo_dict)
 
 unisyl_entropy = entropy_compute(train_unisylprob, train_unisylprob, dict = False)
 bisyl_entropy = entropy_compute(train_bisylprob, train_bisylprob, dict = False)
+test1_unisyl_entropy = entropy_compute(test1_unisylprob, test1_unisylprob, dict = False)
+test2_unisyl_entropy = entropy_compute(test2_unisylprob, test2_unisylprob, dict = False)
+test1_bisyl_entropy = entropy_compute(test1_bisylprob, test1_bisylprob, dict = False)
+test2_bisyl_entropy = entropy_compute(test2_bisylprob, test2_bisylprob, dict = False)
 train1_unisyl_unkprob = UNK_process(train_unisylprob, test1_unisylprob, train_unisyl_dict, test1_unisyl_dict)
 unisyl1_cross_ent = entropy_compute(test1_unisylprob, train_unisylprob, train1_unisyl_unkprob, dict = False)
 train2_unisyl_unkprob = UNK_process(train_unisylprob, test2_unisylprob, train_unisyl_dict, test2_unisyl_dict)
@@ -138,6 +142,10 @@ bisyl2_cross_ent = entropy_compute(test2_bisylprob, train_bisylprob, train2_bisy
 
 unijamo_entropy = entropy_compute(train_unijamoprob, train_unijamoprob, dict = False)
 bijamo_entropy = entropy_compute(train_bijamoprob, train_bijamoprob, dict = False)
+test1_unijamo_entropy = entropy_compute(test1_unijamoprob, test1_unijamoprob, dict = False)
+test2_unijamo_entropy = entropy_compute(test2_unijamoprob, test2_unijamoprob, dict = False)
+test1_bijamo_entropy = entropy_compute(test1_bijamoprob, test1_bijamoprob, dict = False)
+test2_bijamo_entropy = entropy_compute(test2_bijamoprob, test2_bijamoprob, dict = False)
 train1_unijamo_unkprob = UNK_process(train_unijamoprob, test1_unijamoprob, train_unijamo_dict, test1_unijamo_dict)
 unijamo1_cross_ent = entropy_compute(test1_unijamoprob, train_unijamoprob, train1_unijamo_unkprob, dict = False)
 train2_unijamo_unkprob = UNK_process(train_unijamoprob, test2_unijamoprob, train_unijamo_dict, test2_unijamo_dict)
@@ -146,3 +154,12 @@ train1_bijamo_unkprob = UNK_process(train_bijamoprob, test1_bijamoprob, train_bi
 bijamo1_cross_ent = entropy_compute(test1_bijamoprob, train_bijamoprob, train1_bijamo_unkprob, dict = False)
 train2_bijamo_unkprob = UNK_process(train_bijamoprob, test2_bijamoprob, train_bijamo_dict, test2_bijamo_dict)
 bijamo2_cross_ent = entropy_compute(test2_bijamoprob, train_bijamoprob, train2_bijamo_unkprob, dict = False)
+
+import pandas as pd
+pd.DataFrame({"Corpus": ["Sejong.nov.Traning", "", "", "", "Sejong.nov.test", "","","","Hani.test","","",""],
+              "Unit": [codecs.decode("자소별", "utf-8"), "", codecs.decode("음절별", "utf-8"), ""]*3,
+             "Model": ["uni-gram", "bi-gram"]*6,
+              "Entropy": [unijamo_entropy, bijamo_entropy, unisyl_entropy, bisyl_entropy, test1_unijamo_entropy, test1_bijamo_entropy, test1_unisyl_entropy, test1_bisyl_entropy, test2_unijamo_entropy, test2_bijamo_entropy, test2_unisyl_entropy, test2_bisyl_entropy],
+             "Cross Entropy": ["", "", "", "", unijamo1_cross_ent, bijamo1_cross_ent, unisyl1_cross_ent, bisyl1_cross_ent, unijamo2_cross_ent, bijamo2_cross_ent, unisyl2_cross_ent, bisyl2_cross_ent],
+              "Difference": ["", "", "", "", test1_unijamo_entropy-unijamo1_cross_ent, test1_bijamo_entropy-bijamo1_cross_ent, test1_unisyl_entropy-unisyl1_cross_ent, test1_bisyl_entropy-bisyl1_cross_ent, test2_unijamo_entropy-unijamo2_cross_ent, test2_bijamo_entropy-bijamo2_cross_ent, test2_unisyl_entropy-unisyl2_cross_ent, test2_bisyl_entropy-bisyl2_cross_ent]
+              })
