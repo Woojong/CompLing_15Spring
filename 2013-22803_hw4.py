@@ -164,3 +164,4 @@ df = pd.DataFrame({"Corpus": ["Sejong.nov.Traning", "", "", "", "Sejong.nov.test
                   "Difference": ["", "", "", "", test1_unijamo_entropy-unijamo1_cross_ent, test1_bijamo_entropy-bijamo1_cross_ent, test1_unisyl_entropy-unisyl1_cross_ent, test1_bisyl_entropy-bisyl1_cross_ent, test2_unijamo_entropy-unijamo2_cross_ent, test2_bijamo_entropy-bijamo2_cross_ent, test2_unisyl_entropy-unisyl2_cross_ent, test2_bisyl_entropy-bisyl2_cross_ent]
                   })
 df = df[["Corpus", "Unit", "Model", "Entropy", "CrossEntropy", "Difference"]]
+print df
