@@ -112,16 +112,15 @@ def sylTojamo(syllable_list): # syllable to jamo
     return tmp_list
 
 #### Converting unseen words in trainig data to <UNK>
-def UNK_process(traindata, testdata, trainngram, testngram): # traindata for training probability data, testdata for test probability data, trainngram for training n-gram dictionary, testgram for test n-gram dictionary
-    keylist = testdata.keys() # extracting test data probability dictionary keys
+def UNK_process(traindata, testdata, testngram): # traindata for training probability data, testdata for test probability data, trainngram for training n-gram dictionary, testgram for test n-gram dictionary
     total_unk = 0 # setting UNK probability as 0
-    train_nvocab = sum(trainngram.values())
-    for keys in keylist:
+    test_nvocab = sum(testngram.values()) # total trainngram token
+    for keys in testdata.keys():# extracting test data probability dictionary keys
         try:
             traindata[keys]
         except:
-            total_unk = total_unk + testngram[keys] if u"<UNK>" in trainngram.keys() else testngram[keys]
-    unk_prob = float(total_unk)/float(train_nvocab)
+            total_unk = total_unk + testngram[keys]
+    unk_prob = float(total_unk)/float(test_nvocab)
     return unk_prob
 
 #### Computing entropy (and cross entropy, if you want entroypy: "data == crossdata", cross entropy: "data != crossdata")

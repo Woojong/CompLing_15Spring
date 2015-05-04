@@ -59,16 +59,15 @@ def sylTojamo(syllable_list): # syllable to jamo
     return tmp_list
 
 #### Converting unseen words in trainig data to <UNK>
-def UNK_process(traindata, testdata, trainngram, testngram): # traindata for training probability data, testdata for test probability data, trainngram for training n-gram dictionary, testgram for test n-gram dictionary
-    keylist = testdata.keys() # extracting test data probability dictionary keys
+def UNK_process(traindata, testdata, testngram): # traindata for training probability data, testdata for test probability data, trainngram for training n-gram dictionary, testgram for test n-gram dictionary
     total_unk = 0 # setting UNK probability as 0
-    train_nvocab = sum(trainngram.values())
-    for keys in keylist:
+    test_nvocab = sum(testngram.values()) # total trainngram token
+    for keys in testdata.keys():# extracting test data probability dictionary keys
         try:
             traindata[keys]
         except:
-            total_unk = total_unk + testngram[keys] if u"<UNK>" in trainngram.keys() else testngram[keys]
-    unk_prob = float(total_unk)/float(train_nvocab)
+            total_unk = total_unk + testngram[keys]
+    unk_prob = float(total_unk)/float(test_nvocab)
     return unk_prob
 
 #### Computing entropy (and cross entropy, if you want entroypy: "data == crossdata", cross entropy: "data != crossdata")
@@ -131,13 +130,13 @@ test1_unisyl_entropy = entropy_compute(test1_unisylprob, test1_unisylprob, dict 
 test2_unisyl_entropy = entropy_compute(test2_unisylprob, test2_unisylprob, dict = False)
 test1_bisyl_entropy = entropy_compute(test1_bisylprob, test1_bisylprob, dict = False)
 test2_bisyl_entropy = entropy_compute(test2_bisylprob, test2_bisylprob, dict = False)
-train1_unisyl_unkprob = UNK_process(train_unisylprob, test1_unisylprob, train_unisyl_dict, test1_unisyl_dict)
+train1_unisyl_unkprob = UNK_process(train_unisylprob, test1_unisylprob, test1_unisyl_dict)
 unisyl1_cross_ent = entropy_compute(test1_unisylprob, train_unisylprob, train1_unisyl_unkprob, dict = False)
-train2_unisyl_unkprob = UNK_process(train_unisylprob, test2_unisylprob, train_unisyl_dict, test2_unisyl_dict)
+train2_unisyl_unkprob = UNK_process(train_unisylprob, test2_unisylprob, test2_unisyl_dict)
 unisyl2_cross_ent = entropy_compute(test2_unisylprob, train_unisylprob, train2_unisyl_unkprob, dict = False)
-train1_bisyl_unkprob = UNK_process(train_bisylprob, test1_bisylprob, train_bisyl_dict, test1_bisyl_dict)
+train1_bisyl_unkprob = UNK_process(train_bisylprob, test1_bisylprob, test1_bisyl_dict)
 bisyl1_cross_ent = entropy_compute(test1_bisylprob, train_bisylprob, train1_bisyl_unkprob, dict = False)
-train2_bisyl_unkprob = UNK_process(train_bisylprob, test2_bisylprob, train_bisyl_dict, test2_bisyl_dict)
+train2_bisyl_unkprob = UNK_process(train_bisylprob, test2_bisylprob, test2_bisyl_dict)
 bisyl2_cross_ent = entropy_compute(test2_bisylprob, train_bisylprob, train2_bisyl_unkprob, dict = False)
 
 unijamo_entropy = entropy_compute(train_unijamoprob, train_unijamoprob, dict = False)
@@ -146,13 +145,13 @@ test1_unijamo_entropy = entropy_compute(test1_unijamoprob, test1_unijamoprob, di
 test2_unijamo_entropy = entropy_compute(test2_unijamoprob, test2_unijamoprob, dict = False)
 test1_bijamo_entropy = entropy_compute(test1_bijamoprob, test1_bijamoprob, dict = False)
 test2_bijamo_entropy = entropy_compute(test2_bijamoprob, test2_bijamoprob, dict = False)
-train1_unijamo_unkprob = UNK_process(train_unijamoprob, test1_unijamoprob, train_unijamo_dict, test1_unijamo_dict)
+train1_unijamo_unkprob = UNK_process(train_unijamoprob, test1_unijamoprob, test1_unijamo_dict)
 unijamo1_cross_ent = entropy_compute(test1_unijamoprob, train_unijamoprob, train1_unijamo_unkprob, dict = False)
-train2_unijamo_unkprob = UNK_process(train_unijamoprob, test2_unijamoprob, train_unijamo_dict, test2_unijamo_dict)
+train2_unijamo_unkprob = UNK_process(train_unijamoprob, test2_unijamoprob, test2_unijamo_dict)
 unijamo2_cross_ent = entropy_compute(test2_unijamoprob, train_unijamoprob, train2_unijamo_unkprob, dict = False)
-train1_bijamo_unkprob = UNK_process(train_bijamoprob, test1_bijamoprob, train_bijamo_dict, test1_bijamo_dict)
+train1_bijamo_unkprob = UNK_process(train_bijamoprob, test1_bijamoprob, test1_bijamo_dict)
 bijamo1_cross_ent = entropy_compute(test1_bijamoprob, train_bijamoprob, train1_bijamo_unkprob, dict = False)
-train2_bijamo_unkprob = UNK_process(train_bijamoprob, test2_bijamoprob, train_bijamo_dict, test2_bijamo_dict)
+train2_bijamo_unkprob = UNK_process(train_bijamoprob, test2_bijamoprob, test2_bijamo_dict)
 bijamo2_cross_ent = entropy_compute(test2_bijamoprob, train_bijamoprob, train2_bijamo_unkprob, dict = False)
 
 import pandas as pd # import library pandas
