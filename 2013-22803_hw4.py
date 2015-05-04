@@ -24,7 +24,7 @@ import codecs, os, sys
 curr_dir = os.getcwd() + "\\"
 my_dir = "hw4\\"
 filename = ["sejong.nov.train.txt", "sejong.nov.test.txt", "haniTest.txt"]
-savetext = "Output.txt"
+savetext = "Output.htm"
 if not os.path.exists(curr_dir+my_dir):
     os.makedirs(curr_dir+my_dir)
 sys.path.append(curr_dir+my_dir) # for loading hangulDecoder in my_dir
@@ -155,7 +155,7 @@ bijamo1_cross_ent = entropy_compute(test1_bijamoprob, train_bijamoprob, train1_b
 train2_bijamo_unkprob = UNK_process(train_bijamoprob, test2_bijamoprob, train_bijamo_dict, test2_bijamo_dict)
 bijamo2_cross_ent = entropy_compute(test2_bijamoprob, train_bijamoprob, train2_bijamo_unkprob, dict = False)
 
-import pandas as pd
+import pandas as pd # import library pandas
 df = pd.DataFrame({"Corpus": ["Sejong.nov.Traning", "", "", "", "Sejong.nov.test", "","","","Hani.test","","",""],
                   "Unit": [codecs.decode("자소별", "utf-8"), "", codecs.decode("음절별", "utf-8"), ""]*3,
                  "Model": ["uni-gram", "bi-gram"]*6,
@@ -163,6 +163,8 @@ df = pd.DataFrame({"Corpus": ["Sejong.nov.Traning", "", "", "", "Sejong.nov.test
                  "CrossEntropy": ["", "", "", "", unijamo1_cross_ent, bijamo1_cross_ent, unisyl1_cross_ent, bisyl1_cross_ent, unijamo2_cross_ent, bijamo2_cross_ent, unisyl2_cross_ent, bisyl2_cross_ent],
                   "Difference": ["", "", "", "", test1_unijamo_entropy-unijamo1_cross_ent, test1_bijamo_entropy-bijamo1_cross_ent, test1_unisyl_entropy-unisyl1_cross_ent, test1_bisyl_entropy-bisyl1_cross_ent, test2_unijamo_entropy-unijamo2_cross_ent, test2_bijamo_entropy-bijamo2_cross_ent, test2_unisyl_entropy-unisyl2_cross_ent, test2_bisyl_entropy-bisyl2_cross_ent]
                   })
-df = df[["Corpus", "Unit", "Model", "Entropy", "CrossEntropy", "Difference"]]
-df.to_csv('C:\\Users\\APD\\Desktop\\Output.csv', sep = ',', encoding = 'utf-8')
-print df
+df = df[["Corpus", "Unit", "Model", "Entropy", "CrossEntropy", "Difference"]] # reorganization of data frame
+
+w = codecs.open(curr_dir+my_dir+savetext, 'w', 'utf-8') # save as htm files
+w.write(df.to_html())
+w.close()
