@@ -33,10 +33,13 @@ from hangulDecoder import isHangulSyllable, decodeSyllable
 #### Open and read file
 f = codecs.open(curr_dir + my_dir + filename[0], "r", "utf-8")
 train = f.read()
+train = "<s>" + train + "</s>"
 f = codecs.open(curr_dir + my_dir + filename[1], "r", "utf-8")
 test1 = f.read()
+test1 = "<s>" + test1 + "</s>"
 f = codecs.open(curr_dir + my_dir + filename[2], "r", "utf-8")
 test2 = f.read()
+test2 = "<s>" + test2 + "</s>"
 f.close()
 
 #### Defining function for making n-gram list
