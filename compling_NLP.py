@@ -118,7 +118,7 @@ def UNK_process(traindata, testdata, testngram): # traindata for training probab
     for keys in testdata.keys():# extracting test data probability dictionary keys
         try:
             traindata[keys]
-        except:
+        except: # if exist only in test data, then save unk and calculate unk probability
             total_unk = total_unk + testngram[keys]
     unk_prob = float(total_unk)/float(test_nvocab)
     return unk_prob
