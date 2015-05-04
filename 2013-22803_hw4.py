@@ -61,15 +61,16 @@ def cond_prob(numer_dict, denom_dict, ngramprob = False): # numer_dict for numer
     conditional = {} # initializing conditional probability dictionary
     ngram = {} # initializing n-gram probability dictionary
     total_numer = sum(numer_dict.values())
-    for key in numer_dict.keys():
-        cur_ngram = key.split() # load ngram dict by dict
-        conditional_prob = float(numer_dict[key])/float(denom_dict[" ".join(cur_ngram[:len(cur_ngram)-1])]) # calculating ngram dict probability using c(n-gram)/c((n-1)-gram)
-        ngram_prob = float(numer_dict[key])/float(total_numer) # n-gram probability e.g., c(w1 w2)/sum(c(w1 w2))
-        conditional[key] = conditional_prob # assigning conditional probability
-        ngram[key] = ngram_prob # assigning n-gram probability
     if ngramprob == False:
+        for key in numer_dict.keys():
+            cur_ngram = key.split() # load ngram dict by dict
+            conditional_prob = float(numer_dict[key])/float(denom_dict[" ".join(cur_ngram[:len(cur_ngram)-1])]) # calculating ngram dict probability using c(n-gram)/c((n-1)-gram)
+            conditional[key] = conditional_prob # assigning conditional probability
         return conditional # returing conditiaonl probability
     else:
+        for key in numer_dict.keys():
+            ngram_prob = float(numer_dict[key])/float(total_numer) # n-gram probability e.g., c(w1 w2)/sum(c(w1 w2))
+            ngram[key] = ngram_prob # assigning n-gram probability
         return ngram # returning n-gram probability
 
 #### Filtering only hangul syllable
