@@ -6,6 +6,7 @@ __copyright__ = "Copyrights by Woojong, Yi for Computational Lingustics class (2
 __version__ = "1.0.1"
 
 """
+2015-06-19 added Viterbi algorithm and emission, transition probability
 2015-04-24 added hangul syllable to jamo
 2015-04-14 added good-turing smoothing
 2015-04-11 added add-one smoothing
@@ -140,3 +141,74 @@ def entropy_compute(data, crossdata, unkprob = None, dict = True): # if you usin
         return entropy_dict
     elif dict == False:
         return entropy_values
+
+def emission_dict_word(data, tag_list, sep = '/'): # data for tagged corpus set, i.e., training data, and tag_list for all the tag list
+    emis_dict = dict((i,{}) for i in tag_list if i != "<START>") # excepting start of sentenece symbols
+    for elem in data:
+        try: # add dictionary values
+            if elem != "<START>" and elem != "<END>":
+                tmp_word = elem.split(sep)[0] # word (c.f., "the/dt" -> ["the", "at"][0]
+                tmp_tag = elem.split(sep)[1]  # tag (c.f., "the/dt" -> ["the", "at"][1]
+                emis_dict[tmp_word][tmp_tag] += 1
+        except: # dictionary initialization
+            tmp_word = elem.split(sep)[0]
+            tmp_tag = elem.split(sep)[1]
+            emis_dict[tmp_word].setdefault(tmp_tag,1)
+    return emis_dict
+
+def emission_prob_word(data, tag_ngram): # data for tagged corpus set, i.e., training data, and tag_ngram for tag trasition ngram
+    emis_prob = dict((i,{}) for i in data.keys()) # excepting start of sentenece symbols
+    for word in data.keys():
+        for tag in data[word]:
+            emis_prob[word][tag] = float(data[word][tag])/float(tag_ngram[tag]) # C(word|tag)/C(tag)
+    return emis_prob
+
+def transition_dict(data): # data for tagged corpus set
+    ntrial=0
+    trans_dict = dict((i,{}) for i in data)
+    for elem in data:
+        try:
+            tag = data[ntrial+1]
+            trans_dict[elem][tag] += 1
+        except:
+            tag = data[ntrial+1]
+            trans_dict[elem].setdefault(tag,1)
+        ntrial+=1
+        if ntrial >= len(data)-1:
+            break
+    return trans_dict
+
+def transition_prob(data, denom):
+    trans_prob = dict((i,{}) for i in data)
+    for elem in data.keys():
+        for tag in data[elem].keys():
+            trans_prob[elem][tag] = float(data[elem][tag])/float(denom[elem])
+    return trans_prob
+
+
+def viterbi(observation, transition_p, emission_p): # viterbi algorithms
+    prev_prob = 0
+    tagged_result = []
+    ## initial pos of start sentence##
+    for lines in observation: # firstly, processing viterbi decoder line by line
+        lines = lines.split() # splitting line to word  list
+        initial_phase = transition_p['<START>'] # start of sentence processing
+        tagged_sentence = [] # result sentence (tagged sentence after algorithm) initialization
+        for word in range(len(lines)):
+            try:
+                pairs = {} # possible probability and tag dictionary initialization
+                if lines[word] != "<START>":
+                    for emiss in emission_p[lines[word]]:
+                        try:
+                            pairs[emiss] = emission_p[lines[word]][emiss]*initial_phase[emiss] # possible probability pairs (e.g., [tag, prob]
+                        except: continue
+                    tag = pairs.keys()[pairs.values().index(max(pairs.values()))] # find maximum probability
+                    prev_prob = pairs[tag] # save as previous viterbi probability
+                    tagged_sentence.append(lines[word] + "/" + tag) # tagging sentence
+                    cur_phase = transition_p[tag] # transition probability phase
+                    trans_tag = cur_phase.keys()[cur_phase.values().index(max(cur_phase.values()))] #find maximum prob
+                    trans_tag_prob = cur_phase[trans_tag] # assign maximum prob for the current transition condition/
+                    prev_prob  = prev_prob * trans_tag_prob # save as previous viterbi probability
+            except: tagged_sentence.append(lines[word] + "/" + "dunno") # Unknown pos tagger
+        tagged_result.append(" ".join(tagged_sentence)) # stack tagged sentence to result lists
+    return tagged_result
